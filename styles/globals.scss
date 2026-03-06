@@ -1,0 +1,119 @@
+:root {
+  --colors-text-primary: #FEFDFF;
+  --colors-text-secondary: #8C8C8D;
+  --colors-text-muted: #4E4E4E;
+  --colors-link: #E06823;
+  --colors-bg: #0D0C0D;
+  --colors-bg-surface: #171717;
+  --colors-border: #252528;
+  --colors-bg-inline-code: #171717;
+  --colors-bg-code-block: #171717;
+  --colors-text-code-block: #08CC58;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, "system-ui", "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: var(--colors-text-primary);
+  background: var(--colors-bg);
+}
+
+a {
+  color: var(--colors-link);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.wiki-layout {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+}
+
+.wiki-subtitle {
+  color: var(--colors-text-secondary);
+  margin-top: 0;
+}
+
+.wiki-page-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.wiki-tree-list {
+  list-style: none;
+  margin: 18px 0 0;
+  padding-left: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.wiki-tree-folder {
+  border-left: 2px solid var(--colors-border);
+  padding-left: 12px;
+}
+
+.wiki-folder-name {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--colors-text-secondary);
+}
+
+.wiki-page-list-item {
+  padding: 14px 16px;
+  border: 1px solid var(--colors-border);
+  border-radius: 10px;
+  background: var(--colors-bg-surface);
+}
+
+.wiki-page-link {
+  display: inline-block;
+  font-weight: 600;
+}
+
+.wiki-page-meta {
+  margin: 4px 0 0;
+  color: var(--colors-text-muted);
+  font-size: 14px;
+}
+
+.wiki-article {
+  background: var(--colors-bg-surface);
+  border: 1px solid var(--colors-border);
+  border-radius: 12px;
+  padding: 24px;
+
+  h1 {
+    margin-top: 0;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    background: var(--colors-bg-inline-code);
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+
+  pre {
+    overflow-x: auto;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--colors-bg-code-block);
+    color: var(--colors-text-code-block);
+  }
+}
