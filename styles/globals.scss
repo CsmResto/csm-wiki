@@ -6,8 +6,8 @@
   --colors-bg: #0D0C0D;
   --colors-bg-surface: #171717;
   --colors-border: #252528;
-  --colors-bg-inline-code: #171717;
-  --colors-bg-code-block: #171717;
+  --colors-bg-inline-code: #242424;
+  --colors-bg-code-block: #242424;
   --colors-text-code-block: #08CC58;
 }
 
@@ -37,6 +37,14 @@ a {
   max-width: 860px;
   margin: 0 auto;
   padding: 28px 20px 48px;
+}
+
+.wiki-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .wiki-subtitle {
@@ -90,6 +98,32 @@ a {
   margin: 4px 0 0;
   color: var(--colors-text-muted);
   font-size: 14px;
+}
+
+.locale-switcher {
+  display: inline-flex;
+  border: 1px solid var(--colors-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.locale-switcher-link {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-stretch: expanded;
+  color: var(--colors-text-secondary);
+  background: var(--colors-bg-surface);
+
+  &:hover {
+    text-decoration: none;
+    color: var(--colors-text-primary);
+  }
+}
+
+.locale-switcher-link.is-active {
+  color: var(--colors-text-primary);
+  background: #232327;
 }
 
 .wiki-article {

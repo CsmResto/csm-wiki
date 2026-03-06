@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
 import html from 'remark-html'
+import { Locale } from '@/lib/i18n/locales'
 
 export interface MarkdownFile {
   fullPath: string
@@ -37,6 +38,10 @@ export interface WikiDirectoryData {
 }
 
 const contentDirectory = path.join(process.cwd(), 'content')
+
+function getLocaleContentDirectory(locale: Locale): string {
+  return path.join(contentDirectory, locale)
+}
 
 function toPosixPath(filePath: string): string {
   return filePath.replace(/\\/g, '/')
@@ -75,7 +80,27 @@ function parseWikiMeta(slug: string, fileContents: string): WikiPageMeta {
   return meta
 }
 
-function sortPages(pages: WikiPageMeta[]): WikiPageMeta[] {
+function toSerializableValue(value: unknown): unknown {
+  if (value instanceof Date) {
+    return value.toISOString()
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => toSerializableValue(item))
+  }
+
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>).map(([key, item]) => [
+      key,
+      toSerializableValue(item),
+    ])
+    return Object.fromEntries(entries)
+  }
+
+  return value
+}
+
+function sortPages(pages: WikiPageMeta[], locale: Locale): WikiPageMeta[] {
   return pages.sort((left, right) => {
     const leftOrder = left.order ?? Number.MAX_SAFE_INTEGER
     const rightOrder = right.order ?? Number.MAX_SAFE_INTEGER
@@ -83,7 +108,7 @@ function sortPages(pages: WikiPageMeta[]): WikiPageMeta[] {
     if (leftOrder !== rightOrder) {
       return leftOrder - rightOrder
     }
-    return left.title.localeCompare(right.title, 'ru')
+    return left.title.localeCompare(right.title, locale)
   })
 }
 
@@ -122,10 +147,10 @@ function ensureDirectoryNode(root: WikiTreeNode, directoryMap: Map<string, WikiT
   return parentNode
 }
 
-function sortWikiTree(node: WikiTreeNode): WikiTreeNode {
-  node.directories.sort((left, right) => left.name.localeCompare(right.name, 'ru'))
-  sortPages(node.pages)
-  node.directories.forEach((child) => sortWikiTree(child))
+function sortWikiTree(node: WikiTreeNode, locale: Locale): WikiTreeNode {
+  node.directories.sort((left, right) => left.name.localeCompare(right.name, locale))
+  sortPages(node.pages, locale)
+  node.directories.forEach((child) => sortWikiTree(child, locale))
   return node
 }
 
@@ -144,7 +169,15 @@ function findWikiTreeNodeBySlug(node: WikiTreeNode, slug: string): WikiTreeNode 
   return null
 }
 
-export function getAllMarkdownFiles(dirPath: string = contentDirectory, basePath: string = ''): MarkdownFile[] {
+export function getAllMarkdownFiles(
+  locale: Locale,
+  dirPath: string = getLocaleContentDirectory(locale),
+  basePath: string = ''
+): MarkdownFile[] {
+  if (!fs.existsSync(dirPath)) {
+    return []
+  }
+
   const entries = fs.readdirSync(dirPath, { withFileTypes: true })
   const files: MarkdownFile[] = []
 
@@ -153,7 +186,7 @@ export function getAllMarkdownFiles(dirPath: string = contentDirectory, basePath
     const relativePath = path.join(basePath, entry.name)
 
     if (entry.isDirectory()) {
-      files.push(...getAllMarkdownFiles(fullPath, relativePath))
+      files.push(...getAllMarkdownFiles(locale, fullPath, relativePath))
     } else if (entry.name.endsWith('.md')) {
       const slug = toPosixPath(relativePath).replace(/\.md$/, '')
       files.push({ fullPath, slug })
@@ -163,7 +196,15 @@ export function getAllMarkdownFiles(dirPath: string = contentDirectory, basePath
   return files
 }
 
-export function getAllDirectorySlugs(dirPath: string = contentDirectory, basePath: string = ''): string[] {
+export function getAllDirectorySlugs(
+  locale: Locale,
+  dirPath: string = getLocaleContentDirectory(locale),
+  basePath: string = ''
+): string[] {
+  if (!fs.existsSync(dirPath)) {
+    return []
+  }
+
   const entries = fs.readdirSync(dirPath, { withFileTypes: true })
   const directories: string[] = []
 
@@ -174,24 +215,25 @@ export function getAllDirectorySlugs(dirPath: string = contentDirectory, basePat
 
     const relativePath = toPosixPath(path.join(basePath, entry.name))
     directories.push(relativePath)
-    directories.push(...getAllDirectorySlugs(path.join(dirPath, entry.name), relativePath))
+    directories.push(...getAllDirectorySlugs(locale, path.join(dirPath, entry.name), relativePath))
   }
 
   return directories
 }
 
-export function getAllWikiPages(): WikiPageMeta[] {
+export function getAllWikiPages(locale: Locale): WikiPageMeta[] {
   return sortPages(
-    getAllMarkdownFiles().map(({ fullPath, slug }) => {
+    getAllMarkdownFiles(locale).map(({ fullPath, slug }) => {
       const fileContents = fs.readFileSync(fullPath, 'utf8')
       return parseWikiMeta(slug, fileContents)
-    })
+    }),
+    locale
   )
 }
 
-export function getAllWikiRouteSlugs(): string[] {
-  const fileSlugs = getAllMarkdownFiles().map((item) => item.slug)
-  const directorySlugs = getAllDirectorySlugs()
+export function getAllWikiRouteSlugs(locale: Locale): string[] {
+  const fileSlugs = getAllMarkdownFiles(locale).map((item) => item.slug)
+  const directorySlugs = getAllDirectorySlugs(locale)
 
   const fileSet = new Set(fileSlugs)
   for (const directorySlug of directorySlugs) {
@@ -205,7 +247,7 @@ export function getAllWikiRouteSlugs(): string[] {
   return [...new Set([...directorySlugs, ...fileSlugs])]
 }
 
-export function getWikiTree(): WikiTreeNode {
+export function getWikiTree(locale: Locale): WikiTreeNode {
   const root: WikiTreeNode = {
     name: 'content',
     slug: '',
@@ -215,23 +257,23 @@ export function getWikiTree(): WikiTreeNode {
 
   const directoryMap = new Map<string, WikiTreeNode>([['', root]])
 
-  for (const directorySlug of getAllDirectorySlugs()) {
+  for (const directorySlug of getAllDirectorySlugs(locale)) {
     ensureDirectoryNode(root, directoryMap, directorySlug)
   }
 
-  for (const page of getAllWikiPages()) {
+  for (const page of getAllWikiPages(locale)) {
     const segments = page.slug.split('/')
     segments.pop()
     const parentSlug = segments.join('/')
     ensureDirectoryNode(root, directoryMap, parentSlug).pages.push(page)
   }
 
-  return sortWikiTree(root)
+  return sortWikiTree(root, locale)
 }
 
-export function getWikiDirectoryData(slug: string): WikiDirectoryData | null {
+export function getWikiDirectoryData(locale: Locale, slug: string): WikiDirectoryData | null {
   const normalizedSlug = slug.replace(/^\/+|\/+$/g, '')
-  const tree = getWikiTree()
+  const tree = getWikiTree(locale)
   const node = findWikiTreeNodeBySlug(tree, normalizedSlug)
 
   if (!node) {
@@ -249,19 +291,19 @@ export function getWikiDirectoryData(slug: string): WikiDirectoryData | null {
   }
 }
 
-export function isDirectorySlug(slug: string): boolean {
+export function isDirectorySlug(locale: Locale, slug: string): boolean {
   const normalizedSlug = slug.replace(/^\/+|\/+$/g, '')
   if (!normalizedSlug) {
     return true
   }
 
-  const directoryPath = path.join(contentDirectory, normalizedSlug)
+  const directoryPath = path.join(getLocaleContentDirectory(locale), normalizedSlug)
   return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory()
 }
 
-export async function getMarkdownData(slug: string): Promise<MarkdownData> {
+export async function getMarkdownData(locale: Locale, slug: string): Promise<MarkdownData> {
   const normalizedSlug = slug.replace(/^\/+|\/+$/g, '')
-  const fullPath = path.join(contentDirectory, `${normalizedSlug}.md`)
+  const fullPath = path.join(getLocaleContentDirectory(locale), `${normalizedSlug}.md`)
 
   if (!fs.existsSync(fullPath)) {
     throw new Error(`Markdown page not found for slug: ${slug}`)
@@ -277,6 +319,6 @@ export async function getMarkdownData(slug: string): Promise<MarkdownData> {
   return {
     ...parseWikiMeta(normalizedSlug, fileContents),
     contentHtml: processedContent.toString(),
-    frontmatter: data,
+    frontmatter: toSerializableValue(data) as Record<string, unknown>,
   }
 }
