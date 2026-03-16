@@ -388,24 +388,36 @@ export default function WikiPage(props: PageProps) {
 
             <h1>{directoryTitle}</h1>
 
-            <ul className="wiki-tree-list">
-              {directory.directories.map((folder) => (
-                <li key={folder.slug} className="wiki-page-list-item">
-                  <Link href={buildWikiHref(locale, folder.slug)} className="wiki-page-link">
-                    {toTitleCase(folder.name)}
-                  </Link>
-                </li>
-              ))}
+            {directory.directories.length > 0 && (
+              <ul className="wiki-tree-list">
+                {directory.directories.map((folder) => (
+                  <li key={folder.slug} className="wiki-page-list-item is-folder">
+                    <Link href={buildWikiHref(locale, folder.slug)} className="wiki-page-link">
+                      <span className="wiki-page-icon" aria-hidden="true">
+                        📁
+                      </span>
+                      {toTitleCase(folder.name)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-              {directory.pages.map((page) => (
-                <li key={page.slug} className="wiki-page-list-item">
-                  <Link href={buildWikiHref(locale, page.slug)} className="wiki-page-link">
-                    {page.title}
-                  </Link>
-                  {page.description && <p className="wiki-page-meta">{page.description}</p>}
-                </li>
-              ))}
-            </ul>
+            {directory.pages.length > 0 && (
+              <ul className="wiki-tree-list">
+                {directory.pages.map((page) => (
+                  <li key={page.slug} className="wiki-page-list-item is-page">
+                    <Link href={buildWikiHref(locale, page.slug)} className="wiki-page-link">
+                      <span className="wiki-page-icon" aria-hidden="true">
+                        📄
+                      </span>
+                      {page.title}
+                    </Link>
+                    {page.description && <p className="wiki-page-meta">{page.description}</p>}
+                  </li>
+                ))}
+                </ul>
+            )}
           </section>
         </main>
       </>

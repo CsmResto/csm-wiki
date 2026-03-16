@@ -211,12 +211,20 @@ a {
   gap: 12px;
 }
 
+.wiki-section-title {
+  margin: 18px 0 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--colors-text-secondary);
+}
+
 .wiki-tree-list {
   list-style: none;
   margin: 18px 0 0;
   padding-left: 0;
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .wiki-tree-folder {
@@ -236,11 +244,25 @@ a {
   padding: 14px 16px;
   border-radius: 10px;
   background: var(--colors-bg-surface);
+  min-width: 220px;
+  flex: 1 1 240px;
 }
 
 .wiki-page-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 600;
+  color: var(--colors-text-primary);
+
+  &:hover {
+    text-decoration: none;
+    color: var(--colors-link);
+  }
+}
+
+.wiki-page-icon {
+  font-size: 12px;
 }
 
 .wiki-page-meta {
