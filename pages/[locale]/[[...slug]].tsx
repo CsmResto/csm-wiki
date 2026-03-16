@@ -1,16 +1,18 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { isLocale, Locale, locales } from '@/lib/i18n/locales'
 import {
   getAllWikiRouteSlugs,
   getMarkdownData,
   getWikiDirectoryData,
+  getWikiTree,
   isDirectorySlug,
   MarkdownData,
   WikiDirectoryData,
+  WikiTreeNode,
 } from '@/lib/markdown'
 
 type BreadcrumbItem = {
@@ -24,12 +26,14 @@ type PageProps =
       locale: Locale
       directory: WikiDirectoryData
       breadcrumbs: BreadcrumbItem[]
+      tree: WikiTreeNode
     }
   | {
       kind: 'page'
       locale: Locale
       page: MarkdownData
       breadcrumbs: BreadcrumbItem[]
+      tree: WikiTreeNode
     }
 
 type UiText = {
@@ -38,6 +42,8 @@ type UiText = {
   copyLabel: string
   copiedLabel: string
   copyFailedLabel: string
+  themeLightLabel: string
+  themeDarkLabel: string
 }
 
 const uiTextByLocale: Record<Locale, UiText> = {
@@ -47,6 +53,8 @@ const uiTextByLocale: Record<Locale, UiText> = {
     copyLabel: 'Копировать',
     copiedLabel: 'Скопировано',
     copyFailedLabel: 'Ошибка',
+    themeLightLabel: 'Светлая',
+    themeDarkLabel: 'Темная',
   },
   en: {
     rootTitle: 'CSM Wiki',
@@ -54,6 +62,8 @@ const uiTextByLocale: Record<Locale, UiText> = {
     copyLabel: 'Copy',
     copiedLabel: 'Copied',
     copyFailedLabel: 'Failed',
+    themeLightLabel: 'Light',
+    themeDarkLabel: 'Dark',
   },
 }
 
@@ -102,11 +112,89 @@ function buildPageBreadcrumbs(locale: Locale, page: MarkdownData): BreadcrumbIte
   return breadcrumbs
 }
 
+function toTitleCase(value: string): string {
+  return value
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+function buildOpenSlugs(slug: string, kind: PageProps['kind']): Set<string> {
+  const normalized = slug.replace(/^\/+|\/+$/g, '')
+  if (!normalized) {
+    return new Set()
+  }
+
+  const segments = normalized.split('/').filter(Boolean)
+  const limit = kind === 'page' ? Math.max(segments.length - 1, 0) : segments.length
+  const open = new Set<string>()
+
+  for (let index = 0; index < limit; index += 1) {
+    const segmentSlug = segments.slice(0, index + 1).join('/')
+    if (segmentSlug) {
+      open.add(segmentSlug)
+    }
+  }
+
+  return open
+}
+
 export default function WikiPage(props: PageProps) {
   const text = uiTextByLocale[props.locale]
   const currentSlug = props.kind === 'directory' ? props.directory.slug : props.page.slug
   const breadcrumbs = props.breadcrumbs
+  const tree = props.tree
   const markdownContentRef = useRef<HTMLDivElement | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const openSlugs = buildOpenSlugs(currentSlug, props.kind)
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem('wiki-theme')
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches
+    const initialTheme = stored === 'light' || stored === 'dark' ? stored : prefersLight ? 'light' : 'dark'
+    setTheme(initialTheme)
+    document.documentElement.setAttribute('data-theme', initialTheme)
+  }, [])
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(nextTheme)
+    document.documentElement.setAttribute('data-theme', nextTheme)
+    window.localStorage.setItem('wiki-theme', nextTheme)
+  }
+
+  const renderNavList = (node: WikiTreeNode, level: number) => {
+    const hasChildren = node.directories.length > 0 || node.pages.length > 0
+    if (!hasChildren) {
+      return null
+    }
+
+    return (
+      <ul className={`wiki-nav-list ${level === 0 ? 'is-root' : ''}`}>
+        {node.directories.map((directory) => {
+          const isOpen = openSlugs.has(directory.slug)
+          const isActive = currentSlug === directory.slug
+          return (
+            <li key={directory.slug} className={`wiki-nav-item ${isActive ? 'is-active' : ''}`}>
+              <Link href={buildWikiHref(props.locale, directory.slug)} className="wiki-nav-link">
+                {toTitleCase(directory.name)}
+              </Link>
+              {isOpen && renderNavList(directory, level + 1)}
+            </li>
+          )
+        })}
+        {node.pages.map((page) => {
+          const isActive = currentSlug === page.slug
+          return (
+            <li key={page.slug} className={`wiki-nav-item ${isActive ? 'is-active' : ''}`}>
+              <Link href={buildWikiHref(props.locale, page.slug)} className="wiki-nav-link">
+                {page.title}
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    )
+  }
 
   useEffect(() => {
     if (props.kind !== 'page') {
@@ -222,55 +310,70 @@ export default function WikiPage(props: PageProps) {
           <title>{directoryTitle} | CSM Wiki</title>
           <meta name="description" content={text.homeDescription} />
         </Head>
-        <main className="wiki-layout">
-          <header className="wiki-toolbar">
-            {isRootDirectory ? (
-              <span />
-            ) : (
-              <nav className="wiki-breadcrumbs" aria-label="Breadcrumb">
-                <Link href={buildWikiHref(locale, '')} className="wiki-breadcrumb-link">
-                  {text.rootTitle}
-                </Link>
-                {breadcrumbs.map((item, index) => {
-                  const isLast = index === breadcrumbs.length - 1
-                  return (
-                    <span key={item.slug} className="wiki-breadcrumb-item">
-                      <span className="wiki-breadcrumb-separator">/</span>
-                      {isLast ? (
-                        <span className="wiki-breadcrumb-current">{item.label}</span>
-                      ) : (
-                        <Link href={buildWikiHref(locale, item.slug)} className="wiki-breadcrumb-link">
-                          {item.label}
-                        </Link>
-                      )}
-                    </span>
-                  )
-                })}
-              </nav>
-            )}
-            <LocaleSwitcher locale={locale} slug={currentSlug} />
-          </header>
+        <main className="wiki-shell">
+          <aside className="wiki-sidebar">
+            <div className="wiki-sidebar__header">
+              <Link href={buildWikiHref(locale, '')} className="wiki-sidebar__title">
+                {text.rootTitle}
+              </Link>
+            </div>
+            {renderNavList(tree, 0)}
+          </aside>
+          <section className="wiki-content">
+            <header className="wiki-toolbar">
+              {isRootDirectory ? (
+                <span />
+              ) : (
+                <nav className="wiki-breadcrumbs" aria-label="Breadcrumb">
+                  <Link href={buildWikiHref(locale, '')} className="wiki-breadcrumb-link">
+                    {text.rootTitle}
+                  </Link>
+                  {breadcrumbs.map((item, index) => {
+                    const isLast = index === breadcrumbs.length - 1
+                    return (
+                      <span key={item.slug} className="wiki-breadcrumb-item">
+                        <span className="wiki-breadcrumb-separator">/</span>
+                        {isLast ? (
+                          <span className="wiki-breadcrumb-current">{item.label}</span>
+                        ) : (
+                          <Link href={buildWikiHref(locale, item.slug)} className="wiki-breadcrumb-link">
+                            {item.label}
+                          </Link>
+                        )}
+                      </span>
+                    )
+                  })}
+                </nav>
+              )}
+              <div className="wiki-toolbar__controls">
+                <button type="button" className="wiki-theme-toggle" onClick={toggleTheme} aria-pressed={theme === 'light'}>
+                  {theme === 'light' ? text.themeLightLabel : text.themeDarkLabel}
+                </button>
+                <LocaleSwitcher locale={locale} slug={currentSlug} />
+              </div>
+            </header>
 
-          <h1>{directoryTitle}</h1>
+            <h1>{directoryTitle}</h1>
 
-          <ul className="wiki-tree-list">
-            {directory.directories.map((folder) => (
-              <li key={folder.slug} className="wiki-page-list-item">
-                <Link href={buildWikiHref(locale, folder.slug)} className="wiki-page-link">
-                  {folder.name}
-                </Link>
-              </li>
-            ))}
+            <ul className="wiki-tree-list">
+              {directory.directories.map((folder) => (
+                <li key={folder.slug} className="wiki-page-list-item">
+                  <Link href={buildWikiHref(locale, folder.slug)} className="wiki-page-link">
+                    {toTitleCase(folder.name)}
+                  </Link>
+                </li>
+              ))}
 
-            {directory.pages.map((page) => (
-              <li key={page.slug} className="wiki-page-list-item">
-                <Link href={buildWikiHref(locale, page.slug)} className="wiki-page-link">
-                  {page.title}
-                </Link>
-                {page.description && <p className="wiki-page-meta">{page.description}</p>}
-              </li>
-            ))}
-          </ul>
+              {directory.pages.map((page) => (
+                <li key={page.slug} className="wiki-page-list-item">
+                  <Link href={buildWikiHref(locale, page.slug)} className="wiki-page-link">
+                    {page.title}
+                  </Link>
+                  {page.description && <p className="wiki-page-meta">{page.description}</p>}
+                </li>
+              ))}
+            </ul>
+          </section>
         </main>
       </>
     )
@@ -283,36 +386,51 @@ export default function WikiPage(props: PageProps) {
         <title>{page.title} | CSM Wiki</title>
         {page.description && <meta name="description" content={page.description} />}
       </Head>
-      <main className="wiki-layout">
-        <header className="wiki-toolbar">
-          <nav className="wiki-breadcrumbs" aria-label="Breadcrumb">
-            <Link href={buildWikiHref(locale, '')} className="wiki-breadcrumb-link">
+      <main className="wiki-shell">
+        <aside className="wiki-sidebar">
+          <div className="wiki-sidebar__header">
+            <Link href={buildWikiHref(locale, '')} className="wiki-sidebar__title">
               {text.rootTitle}
             </Link>
-            {breadcrumbs.map((item, index) => {
-              const isLast = index === breadcrumbs.length - 1
-              return (
-                <span key={item.slug} className="wiki-breadcrumb-item">
-                  <span className="wiki-breadcrumb-separator">/</span>
-                  {isLast ? (
-                    <span className="wiki-breadcrumb-current">{item.label}</span>
-                  ) : (
-                    <Link href={buildWikiHref(locale, item.slug)} className="wiki-breadcrumb-link">
-                      {item.label}
-                    </Link>
-                  )}
-                </span>
-              )
-            })}
-          </nav>
-          <LocaleSwitcher locale={locale} slug={currentSlug} />
-        </header>
+          </div>
+          {renderNavList(tree, 0)}
+        </aside>
+        <section className="wiki-content">
+          <header className="wiki-toolbar">
+            <nav className="wiki-breadcrumbs" aria-label="Breadcrumb">
+              <Link href={buildWikiHref(locale, '')} className="wiki-breadcrumb-link">
+                {text.rootTitle}
+              </Link>
+              {breadcrumbs.map((item, index) => {
+                const isLast = index === breadcrumbs.length - 1
+                return (
+                  <span key={item.slug} className="wiki-breadcrumb-item">
+                    <span className="wiki-breadcrumb-separator">/</span>
+                    {isLast ? (
+                      <span className="wiki-breadcrumb-current">{item.label}</span>
+                    ) : (
+                      <Link href={buildWikiHref(locale, item.slug)} className="wiki-breadcrumb-link">
+                        {item.label}
+                      </Link>
+                    )}
+                  </span>
+                )
+                })}
+              </nav>
+            <div className="wiki-toolbar__controls">
+              <button type="button" className="wiki-theme-toggle" onClick={toggleTheme} aria-pressed={theme === 'light'}>
+                {theme === 'light' ? text.themeLightLabel : text.themeDarkLabel}
+              </button>
+              <LocaleSwitcher locale={locale} slug={currentSlug} />
+            </div>
+          </header>
 
-        <article className="wiki-article">
-          <h1>{page.title}</h1>
-          {page.description && <p className="wiki-subtitle">{page.description}</p>}
-          <div ref={markdownContentRef} className="wiki-markdown" dangerouslySetInnerHTML={{ __html: page.contentHtml }} />
-        </article>
+          <article className="wiki-article">
+            <h1>{page.title}</h1>
+            {page.description && <p className="wiki-subtitle">{page.description}</p>}
+            <div ref={markdownContentRef} className="wiki-markdown" dangerouslySetInnerHTML={{ __html: page.contentHtml }} />
+          </article>
+        </section>
       </main>
     </>
   )
@@ -355,6 +473,7 @@ export const getStaticProps: GetStaticProps<PageProps, { locale: string; slug?: 
         locale,
         directory,
         breadcrumbs: buildDirectoryBreadcrumbs(locale, slug),
+        tree: getWikiTree(locale),
       },
     }
   }
@@ -367,6 +486,7 @@ export const getStaticProps: GetStaticProps<PageProps, { locale: string; slug?: 
         locale,
         page,
         breadcrumbs: buildPageBreadcrumbs(locale, page),
+        tree: getWikiTree(locale),
       },
     }
   } catch {
