@@ -145,6 +145,7 @@ export default function WikiPage(props: PageProps) {
   const tree = props.tree
   const markdownContentRef = useRef<HTMLDivElement | null>(null)
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false)
   const openSlugs = buildOpenSlugs(currentSlug, props.kind)
 
   useEffect(() => {
@@ -161,6 +162,38 @@ export default function WikiPage(props: PageProps) {
     document.documentElement.setAttribute('data-theme', nextTheme)
     window.localStorage.setItem('wiki-theme', nextTheme)
   }
+
+  // если надо будет скрывать на скролл вниз:
+  // useEffect(() => {
+  //   let lastY = window.scrollY
+  //   let ticking = false
+
+  //   const update = () => {
+  //     const currentY = window.scrollY
+  //     const delta = currentY - lastY
+  //     const nextHidden = currentY > 80 && delta > 6
+  //     const shouldShow = delta < -6 || currentY < 40
+
+  //     if (nextHidden !== isHeaderHidden && nextHidden) {
+  //       setIsHeaderHidden(true)
+  //     } else if (shouldShow && isHeaderHidden) {
+  //       setIsHeaderHidden(false)
+  //     }
+
+  //     lastY = currentY
+  //     ticking = false
+  //   }
+
+  //   const onScroll = () => {
+  //     if (!ticking) {
+  //       ticking = true
+  //       window.requestAnimationFrame(update)
+  //     }
+  //   }
+
+  //   window.addEventListener('scroll', onScroll, { passive: true })
+  //   return () => window.removeEventListener('scroll', onScroll)
+  // }, [isHeaderHidden])
 
   const renderNavList = (node: WikiTreeNode, level: number) => {
     const hasChildren = node.directories.length > 0 || node.pages.length > 0
@@ -320,7 +353,7 @@ export default function WikiPage(props: PageProps) {
             {renderNavList(tree, 0)}
           </aside>
           <section className="wiki-content">
-            <header className="wiki-toolbar">
+            <header className={`wiki-toolbar wiki-toolbar--sticky ${isHeaderHidden ? 'is-hidden' : ''}`}>
               {isRootDirectory ? (
                 <span />
               ) : (
@@ -396,7 +429,7 @@ export default function WikiPage(props: PageProps) {
           {renderNavList(tree, 0)}
         </aside>
         <section className="wiki-content">
-          <header className="wiki-toolbar">
+          <header className={`wiki-toolbar wiki-toolbar--sticky ${isHeaderHidden ? 'is-hidden' : ''}`}>
             <nav className="wiki-breadcrumbs" aria-label="Breadcrumb">
               <Link href={buildWikiHref(locale, '')} className="wiki-breadcrumb-link">
                 {text.rootTitle}

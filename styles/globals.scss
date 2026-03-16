@@ -107,6 +107,20 @@ a {
   flex-wrap: wrap;
 }
 
+.wiki-toolbar--sticky {
+  position: sticky;
+  top: 0px;
+  z-index: 5;
+  background: var(--colors-bg);
+  padding: 10px 12px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.wiki-toolbar--sticky.is-hidden {
+  transform: translateY(-120%);
+  opacity: 0;
+}
+
 .wiki-toolbar__controls {
   display: inline-flex;
   align-items: center;
