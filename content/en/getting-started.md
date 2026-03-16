@@ -15,7 +15,7 @@ Regular paragraph text.
 
 Use **bold**, *italic* and `inline code` when needed.
 
-Link example: [Open homepage](https://example.com).
+Link example: [Open homepage](../) or [COSMOS Landing](https://cosmosresto.ru/).
 
 ---
 
