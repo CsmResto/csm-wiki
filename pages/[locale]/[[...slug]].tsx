@@ -123,6 +123,27 @@ export default function WikiPage(props: PageProps) {
       button.textContent = text.copyLabel
     })
 
+    const findAnchorTarget = (rawId: string): HTMLElement | null => {
+      if (!rawId) {
+        return null
+      }
+      const direct = document.getElementById(rawId)
+      if (direct) {
+        return direct
+      }
+      return document.getElementById(`user-content-${rawId}`)
+    }
+
+    const scrollToAnchor = (rawId: string) => {
+      const target = findAnchorTarget(rawId)
+      if (!target) {
+        return false
+      }
+      target.scrollIntoView({ block: 'start' })
+      history.replaceState(null, '', `#${encodeURIComponent(rawId)}`)
+      return true
+    }
+
     const onClick = async (event: MouseEvent) => {
       const target = event.target as HTMLElement | null
       const headingLink = target?.closest<HTMLAnchorElement>('h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a, .heading-anchor')
@@ -133,6 +154,18 @@ export default function WikiPage(props: PageProps) {
           await navigator.clipboard.writeText(url)
         } catch {}
         return
+      }
+
+      const anchorLink = target?.closest<HTMLAnchorElement>('a[href^="#"]')
+      if (anchorLink) {
+        const href = anchorLink.getAttribute('href') ?? ''
+        const id = decodeURIComponent(href.slice(1))
+        if (id) {
+          event.preventDefault()
+          if (scrollToAnchor(id)) {
+            return
+          }
+        }
       }
 
       const button = target?.closest<HTMLButtonElement>('[data-copy-code]')
@@ -167,6 +200,12 @@ export default function WikiPage(props: PageProps) {
     }
 
     root.addEventListener('click', onClick)
+    if (window.location.hash) {
+      const rawId = decodeURIComponent(window.location.hash.slice(1))
+      if (rawId) {
+        window.setTimeout(() => scrollToAnchor(rawId), 0)
+      }
+    }
     return () => {
       root.removeEventListener('click', onClick)
     }

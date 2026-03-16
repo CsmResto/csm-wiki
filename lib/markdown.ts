@@ -166,6 +166,36 @@ function getHeadingText(node: MarkdownNode | null | undefined): string {
   return ''
 }
 
+function extractCustomHeadingId(node: MarkdownNode): string | null {
+  if (!Array.isArray(node.children) || node.children.length === 0) {
+    return null
+  }
+
+  const lastIndex = node.children.length - 1
+  const lastChild = node.children[lastIndex]
+
+  if (lastChild?.type !== 'text' || typeof lastChild.value !== 'string') {
+    return null
+  }
+
+  const text = lastChild.value
+  const match = text.match(/\s*\{#([A-Za-z0-9_-]+)\}\s*$/)
+  if (!match) {
+    return null
+  }
+
+  const id = match[1]
+  const trimmed = text.replace(/\s*\{#[A-Za-z0-9_-]+\}\s*$/, '').trimEnd()
+
+  if (trimmed) {
+    lastChild.value = trimmed
+  } else {
+    node.children.splice(lastIndex, 1)
+  }
+
+  return id
+}
+
 function remarkAutolinkHeadings() {
   return (tree: MarkdownNode) => {
     const slugCounts = new Map<string, number>()
@@ -176,8 +206,9 @@ function remarkAutolinkHeadings() {
       }
 
       if (node.type === 'heading') {
+        const customId = extractCustomHeadingId(node)
         const text = getHeadingText(node)
-        const baseSlug = slugifyHeading(text)
+        const baseSlug = customId ?? slugifyHeading(text)
         const currentCount = slugCounts.get(baseSlug) ?? 0
         const nextCount = currentCount + 1
         slugCounts.set(baseSlug, nextCount)

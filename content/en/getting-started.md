@@ -67,6 +67,12 @@ export function greet(user: User): string {
 
 Use this area for additional details and implementation notes.
 
+### Heading with a custom anchor {#custom-anchor}
+
+Use `{#custom-anchor}` at the end of a heading to set the anchor ID manually.
+
+Example link to this section: [Jump to custom anchor](#custom-anchor)
+
 ## 6. Images
 
 Example image:
