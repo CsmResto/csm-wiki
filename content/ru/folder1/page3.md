@@ -1,13 +1,13 @@
 ---
-title: Create a Location
-description: Everythig about Location creation
+title: Создание локации
+description: Все о создании локации
 order: 2
 updatedAt: 2026-03-25
 ---
 
 # Bigger text
 
-Сюда вписываем что-то значимое
+Тут русский
 
 ## small text
 
