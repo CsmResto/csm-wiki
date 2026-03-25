@@ -135,7 +135,7 @@ function buildOpenSlugs(slug: string, kind: PageProps['kind']): Set<string> {
 
 export default function WikiPage(props: PageProps) {
   const { basePath } = useRouter()
-  const assetPrefix = basePath ? `${basePath}/` : '/'
+  const [assetPrefix, setAssetPrefix] = useState(basePath ? `${basePath}/` : '/')
   const text = uiTextByLocale[props.locale]
   const currentSlug = props.kind === 'directory' ? props.directory.slug : props.page.slug
   const breadcrumbs = props.breadcrumbs
@@ -153,6 +153,26 @@ export default function WikiPage(props: PageProps) {
     setTheme(initialTheme)
     document.documentElement.setAttribute('data-theme', initialTheme)
   }, [])
+
+  useEffect(() => {
+    if (basePath) {
+      setAssetPrefix(`${basePath}/`)
+      return
+    }
+    if (typeof window === 'undefined') {
+      return
+    }
+    const segments = window.location.pathname.split('/').filter(Boolean)
+    if (segments.length > 1 && segments[1] === props.locale) {
+      setAssetPrefix(`/${segments[0]}/`)
+      return
+    }
+    if (segments.length > 0 && segments[0] === props.locale) {
+      setAssetPrefix('/')
+      return
+    }
+    setAssetPrefix('/')
+  }, [basePath, props.locale])
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light'
