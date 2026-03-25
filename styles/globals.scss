@@ -14,6 +14,8 @@
   --colors-code-button-bg: #2a2a2a;
   --colors-code-button-bg-active: #1f5f36;
   --colors-code-button-bg-failed: #6a2b2b;
+  --logo-full-url: url('/assets/logo-full.svg');
+  --logo-compact-url: url('/assets/logo-compact.svg');
 }
 
 :root[data-theme="light"] {
@@ -32,6 +34,8 @@
   --colors-code-button-bg: #ecebe8;
   --colors-code-button-bg-active: #d8e8dd;
   --colors-code-button-bg-failed: #f1d6d6;
+  --logo-full-url: url('/assets/logo-full-accent.svg');
+  --logo-compact-url: url('/assets/logo-compact-accent.svg');
 }
 
 * {
@@ -98,7 +102,7 @@ a {
   display: block;
   width: 144px;
   height: 26px;
-  background: url('/assets/logo-full.svg') no-repeat left center / contain;
+  background: var(--logo-full-url) no-repeat left center / contain;
 }
 
 .wiki-content {
@@ -206,7 +210,7 @@ a {
   display: block;
   width: 144px;
   height: 26px;
-  background: url('/assets/logo-full.svg') no-repeat left center / contain;
+  background: var(--logo-full-url) no-repeat left center / contain;
 }
 
 .wiki-mobile-menu__close {
@@ -675,7 +679,7 @@ a {
   .wiki-sidebar__logo {
     width: 32px;
     height: 24px;
-    background-image: url('/assets/logo-compact.svg');
+    background-image: var(--logo-compact-url);
   }
 
   .wiki-article img {
