@@ -1,7 +1,8 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import { CSSProperties, useEffect, useRef, useState } from 'react'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { isLocale, Locale, locales } from '@/lib/i18n/locales'
 import {
@@ -133,6 +134,14 @@ function buildOpenSlugs(slug: string, kind: PageProps['kind']): Set<string> {
 }
 
 export default function WikiPage(props: PageProps) {
+  const { basePath } = useRouter()
+  const assetPrefix = basePath ? `${basePath}/` : '/'
+  const shellStyle = {
+    '--logo-full-dark': `url(${assetPrefix}assets/logo-full.svg)`,
+    '--logo-compact-dark': `url(${assetPrefix}assets/logo-compact.svg)`,
+    '--logo-full-light': `url(${assetPrefix}assets/logo-full-accent.svg)`,
+    '--logo-compact-light': `url(${assetPrefix}assets/logo-compact-accent.svg)`,
+  } as CSSProperties
   const text = uiTextByLocale[props.locale]
   const currentSlug = props.kind === 'directory' ? props.directory.slug : props.page.slug
   const breadcrumbs = props.breadcrumbs
@@ -352,7 +361,7 @@ export default function WikiPage(props: PageProps) {
           <title>{directoryTitle} | CSM Wiki</title>
           <meta name="description" content={text.homeDescription} />
         </Head>
-        <main className="wiki-shell">
+        <main className="wiki-shell" style={shellStyle}>
           <aside className="wiki-sidebar">
             <div className="wiki-sidebar__header">
               <Link href={buildWikiHref(locale, '')} className="wiki-sidebar__title" aria-label={text.rootTitle}>
@@ -481,7 +490,7 @@ export default function WikiPage(props: PageProps) {
         <title>{page.title} | CSM Wiki</title>
         {page.description && <meta name="description" content={page.description} />}
       </Head>
-      <main className="wiki-shell">
+      <main className="wiki-shell" style={shellStyle}>
         <aside className="wiki-sidebar">
           <div className="wiki-sidebar__header">
             <Link href={buildWikiHref(locale, '')} className="wiki-sidebar__title" aria-label={text.rootTitle}>

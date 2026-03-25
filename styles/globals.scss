@@ -14,8 +14,12 @@
   --colors-code-button-bg: #2a2a2a;
   --colors-code-button-bg-active: #1f5f36;
   --colors-code-button-bg-failed: #6a2b2b;
-  --logo-full-url: url('/assets/logo-full.svg');
-  --logo-compact-url: url('/assets/logo-compact.svg');
+  --logo-full-dark: url('/assets/logo-full.svg');
+  --logo-compact-dark: url('/assets/logo-compact.svg');
+  --logo-full-light: url('/assets/logo-full-accent.svg');
+  --logo-compact-light: url('/assets/logo-compact-accent.svg');
+  --logo-full-url: var(--logo-full-dark);
+  --logo-compact-url: var(--logo-compact-dark);
 }
 
 :root[data-theme="light"] {
@@ -34,8 +38,8 @@
   --colors-code-button-bg: #ecebe8;
   --colors-code-button-bg-active: #d8e8dd;
   --colors-code-button-bg-failed: #f1d6d6;
-  --logo-full-url: url('/assets/logo-full-accent.svg');
-  --logo-compact-url: url('/assets/logo-compact-accent.svg');
+  --logo-full-url: var(--logo-full-light);
+  --logo-compact-url: var(--logo-compact-light);
 }
 
 * {
