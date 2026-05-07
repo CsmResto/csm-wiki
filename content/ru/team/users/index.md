@@ -4,4 +4,3 @@ description: "Всё о разделе Пользователи. Создани�
 icon: users
 order: 1
 ---
-[[empty-state]]
