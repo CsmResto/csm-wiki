@@ -281,6 +281,18 @@ function renderMarkdown(contentHtml: string, basePath: string, disableImageZoom 
     return `${assetPrefix}${raw}`
   }
 
+  const isGifImageSrc = (src: string | undefined): boolean => {
+    if (!src) {
+      return false
+    }
+
+    if (/^data:image\/gif(?:;|,)/i.test(src)) {
+      return true
+    }
+
+    return /\.gif(?:[?#].*)?$/i.test(src)
+  }
+
   const buildImgProps = (attribs: Record<string, string> | undefined) => {
     const safeAttribs = attribs ?? {}
     const imgProps: ImgHTMLAttributes<HTMLImageElement> = {
@@ -445,6 +457,7 @@ function renderMarkdown(contentHtml: string, basePath: string, disableImageZoom 
           const imgChild = meaningfulChildren[0]
           const imgProps = buildImgProps(imgChild.attribs)
           const gallery = getGalleryContext(imgChild as unknown as DOMNode)
+          const shouldUseCustomZoom = isGifImageSrc(typeof imgProps.src === 'string' ? imgProps.src : undefined)
 
           if (disableImageZoom) {
             return <div className="wiki-image"><img {...imgProps} /></div>
@@ -452,6 +465,8 @@ function renderMarkdown(contentHtml: string, basePath: string, disableImageZoom 
 
           const zoomedImage = gallery ? (
             <GalleryZoomImage images={gallery.images} index={gallery.index} imgProps={imgProps} disableZoom={disableImageZoom} />
+          ) : shouldUseCustomZoom ? (
+            <GalleryZoomImage images={[imgProps]} index={0} imgProps={imgProps} disableZoom={disableImageZoom} />
           ) : (
             <Zoom>
               <img {...imgProps} />
@@ -478,9 +493,14 @@ function renderMarkdown(contentHtml: string, basePath: string, disableImageZoom 
 
       const imgProps = buildImgProps(element.attribs)
       const gallery = getGalleryContext(domNode)
+      const shouldUseCustomZoom = isGifImageSrc(typeof imgProps.src === 'string' ? imgProps.src : undefined)
 
       if (gallery) {
         return <GalleryZoomImage images={gallery.images} index={gallery.index} imgProps={imgProps} disableZoom={disableImageZoom} />
+      }
+
+      if (shouldUseCustomZoom) {
+        return <GalleryZoomImage images={[imgProps]} index={0} imgProps={imgProps} disableZoom={disableImageZoom} />
       }
 
       if (disableImageZoom) {

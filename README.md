@@ -98,6 +98,7 @@ icon: summary
 
 - Складывайте изображения в `public/<locale>/images/...`.
 - Так ссылки остаются относительными и корректно работают и локально, и на GitHub Pages (из-за `basePath`).
+- Поддерживаются обычные статичные форматы и анимированные GIF.
 
 Как ссылаться:
 
@@ -111,6 +112,8 @@ icon: summary
   `![Схема](../images/getting-started/overview.png)`
 - Файл `content/ru/guide/setup.md` (URL `/ru/guide/setup`):
   `![Схема](../../images/guide/setup/overview.png)`
+- Для GIF используйте те же относительные пути:
+  `![Демонстрация](../images/getting-started/demo.gif)`
 
 Если картинка нужна в двух языках, положите копию в обе папки:
 
