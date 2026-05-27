@@ -124,7 +124,7 @@ updatedAt: 2026-04-24
 - В процессе
 
 [[info type=custom color=#E06823]]
-Всего существует **шесть статусов** бронирования. Подробнее о статусах можно почитать в этой [статье](/ru/reservations/reservations/reserv-status).
+Всего существует **пять статусов** бронирования. Подробнее о статусах можно почитать в этой [статье](/ru/reservations/reservations/reserv-status).
 [[/info]]
 
 ### 9. СМС уведомление
@@ -138,6 +138,6 @@ updatedAt: 2026-04-24
 
 **Читайте дальше:**
 
-— **[Автоматическое создание чека из брони](/ru/reservations/reservations/reserv-order-create.md)**
+— **[Автоматическое создание чека из брони](https://wiki.cosmosresto.ru/ru/reservations/reservations/reserv-order-create/)**
 
 [[delimiter rows=3]]
