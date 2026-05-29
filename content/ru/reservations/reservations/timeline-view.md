@@ -74,7 +74,7 @@ updatedAt: 2026-05-20
 
 В этом режиме бронирования отображаются в виде таблицы. Записи можно сортировать и фильтровать. Также в разделе отображается сводка по бронированиям с учетом примененных фильтров.
 
-![Таймлайн](/ru/images/reserve/timeline-view/timeline-view-5.jpg)
+![Таймлайн](/ru/images/reserve/timeline-view/timeline-view-6.jpg)
 
 [[delimiter rows=1]]
 
