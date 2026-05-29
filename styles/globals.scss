@@ -1,5 +1,5 @@
 :root {
-  --colors-text-primary: #FEFDFF;
+  --colors-text-primary: #dfdfdf;
   --colors-text-secondary: #8C8C8D;
   --colors-text-muted: #4E4E4E;
   --colors-link: #E06823;
@@ -156,7 +156,7 @@ a {
 }
 
 .wiki-gallery[data-gallery-layout="carousel"] img {
-  border-radius: 8px;
+  border-radius: 20px;
   max-width: var(--gallery-carousel-item-max-width) !important;
   max-height: var(--gallery-carousel-item-max-height) !important;
 }
@@ -180,7 +180,7 @@ a {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 8px;
+  border-radius: 20px;
 }
 
 .wiki-gallery [role="button"] {
@@ -1304,7 +1304,7 @@ a {
     max-height: 500px;
     height: auto;
     display: block;
-    border-radius: 8px;
+    border-radius: 20px;
   }
 
   :not(pre) > code {
