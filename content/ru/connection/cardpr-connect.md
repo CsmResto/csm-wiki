@@ -103,8 +103,6 @@ updatedAt: 2026-06-01
 - **[REDSMS](https://redsms.ru/)** - для России.
 - **[Twilio](https://www.twilio.com/)** - для всех остальных стран.
 
-[[info type=custom color=#E06823]]
-[[/info]]
 
 ## Добавление Webhook для интеграции с COSMOS
 
