@@ -1,5 +1,5 @@
 ---
-title: Настройка REDSMS & Twilio
+title: Подключение REDSMS & Twilio
 description: Подключение и настройка REDSMS & Twilio для информирования гостей через COSMOS. 
 summary: Подключение SMS сервисов
 order: 2

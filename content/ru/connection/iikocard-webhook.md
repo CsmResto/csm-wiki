@@ -1,5 +1,5 @@
 ---
-title: Настройка IIKO Card Webhook
+title: Подключение IIKO Card Webhook
 description: Инструкция по настройке webhook-уведомлений в IIKO Card для передачи данных о гостях и бонусной программе в COSMOS.
 order: 3
 updatedAt: 2026-06-01
