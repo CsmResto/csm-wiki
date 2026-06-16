@@ -98,19 +98,21 @@ updatedAt: 2026-06-01
 
 **[Инструкция настройки верификации от CARDPR.](https://ru.cardpr.com/help/forms/phone-verification-more)**
 
-Использование **REDSMS или Twilio** позволит применять один сервис как для SMS-верификации, так и для маркетинговых рассылок через **COSMOS**.
+Использование **REDSMS или Twilio** позволит применять один сервис как для SMS-верификации, так и для маркетинговых рассылок через **Cosmos**.
 
 - **[REDSMS](https://redsms.ru/)** - для России.
 - **[Twilio](https://www.twilio.com/)** - для всех остальных стран.
 
 
-## Добавление Webhook для интеграции с COSMOS
+## Добавление Webhook для интеграции с Cosmos
 
 1. Перейдите в раздел `Настройки/Settings -> API`
 
-2. Найдите параметр `Приватный ключ/Private Key`. Передайте значение приватного ключа в службу поддержки COSMOS.
+2. Найдите параметр `Приватный ключ/Private Key`. Передайте значение приватного ключа в службу поддержки Cosmos.
 
-3. От поддержки COSMOS вы получите данные для настройки Webhook. 
+3. Запросите у поддержки Cosmos данные для настройки Webhook:
+    - URL
+    - Пароль 
 
 4. Перейдите в раздел `Интеграция/Integration`
 
@@ -118,18 +120,18 @@ updatedAt: 2026-06-01
     - `URL / 1c` для **CARDPR**
     - `URL` для **Passquare**
 
-5. Укажите `Сервер/Server` и `Пароль/Password`, предоставленные поддержкой COSMOS.
+5. Укажите `Сервер/Server` и `Пароль/Password`, предоставленные поддержкой Cosmos.
 
 
 [[info type=custom color=#E06823]]
-Если необходимо отображать количество бонусов на электронной карте гостя, сообщите в поддержку COSMOS **название основной бонусной программы из IIKO Card**. В IIKO Card **тип программы** должен быть `Бонусная программа`.
+Если необходимо отображать количество бонусов на электронной карте гостя, сообщите в поддержку Cosmos **название основной бонусной программы из IIKO Card**. В IIKO Card **тип программы** должен быть `Бонусная программа`.
 [[/info]]
 
 [[delimiter rows=3]]
 
 **Читайте дальше:**
 
-— **[Настройка REDSMS & Twilio для рассылок через COSMOS](https://wiki.cosmosresto.ru/ru/connection/redsms-twilio-connect)**
+— **[Настройка REDSMS & Twilio для рассылок через Cosmos](https://wiki.cosmosresto.ru/ru/connection/redsms-twilio-connect)**
 
 — **[Автоматическое создание чека из брони](https://wiki.cosmosresto.ru/ru/reservations/reservations/reserv-order-create/)**
 
