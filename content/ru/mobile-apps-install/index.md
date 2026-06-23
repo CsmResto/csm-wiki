@@ -1,5 +1,5 @@
 ---
 title: "Установка приложений"
-icon: widget
+icon: app
 order: 101
 ---

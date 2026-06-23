@@ -36,12 +36,12 @@ updatedAt: 2026-06-23
 
 1. Открыть в браузере модуль бронирований (ссылка формата `https://……reserv.csmresto.ru`)
 2. Перейти в действия со страницей - кликнуть на три точки
-![image1](/ru/images/mobile-apps-install/page-actions.png)
+![image1](/ru/images/mobile-apps-install/page-actions.jpg)
 3. Выбрать действие **"Добавить на гл. экран"**
-![image2](/ru/images/mobile-apps-install/add-reserv-app-to-main-screen.png)
+![image2](/ru/images/mobile-apps-install/add-reserv-app-to-main-screen.jpg)
 4. В появившемся окне выбрать **"Установить"**
-![image3](/ru/images/mobile-apps-install/install-reserv-app.png)
+![image3](/ru/images/mobile-apps-install/install-reserv-app.jpg)
 5. Подтвердить установку
-![image4](/ru/images/mobile-apps-install/apply-reserv-app.png)
+![image4](/ru/images/mobile-apps-install/apply-reserv-app.jpg)
 
 После этого на главном экране появится значок приложения **Cosmos Reservations** - теперь открывать бронирования на планшете можно через него
