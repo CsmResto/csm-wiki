@@ -358,8 +358,9 @@ function enhanceMarkdownHtml(contentHtml: string): string {
 
   const withTables = wrapMarkdownTables(withPlainCodeBlocks)
   const withInfoBlocks = applyInfoBlocks(withTables)
+  const withGalleryBlocks = applyGalleryBlocks(withInfoBlocks)
 
-  return applyGalleryBlocks(withInfoBlocks)
+  return applyStoreLinks(withGalleryBlocks)
 }
 
 function wrapMarkdownTables(contentHtml: string): string {
@@ -463,7 +464,7 @@ function applyInfoBlocks(contentHtml: string): string {
   }
 
   const sameParagraphRe = /<p>\s*\[\[info([^\]]*)\]\]\s*([\s\S]*?)\s*\[\[\/info\]\]\s*<\/p>/gi
-  let normalizedHtml = contentHtml.replace(sameParagraphRe, (_match, paramsRaw, innerHtml) => {
+  const normalizedHtml = contentHtml.replace(sameParagraphRe, (_match, paramsRaw, innerHtml) => {
     return buildInfoWrapper(paramsRaw ?? '', innerHtml)
   })
 
@@ -535,7 +536,7 @@ function applyGalleryBlocks(contentHtml: string): string {
   }
 
   const sameParagraphRe = /<p>\s*\[\[gallery([^\]]*)\]\]\s*([\s\S]*?)\s*\[\[\/gallery\]\]\s*<\/p>/gi
-  let normalizedHtml = contentHtml.replace(sameParagraphRe, (_match, paramsRaw, innerHtml) => {
+  const normalizedHtml = contentHtml.replace(sameParagraphRe, (_match, paramsRaw, innerHtml) => {
     return buildGalleryWrapper(paramsRaw ?? '', innerHtml)
   })
 
@@ -571,6 +572,149 @@ function applyGalleryBlocks(contentHtml: string): string {
   }
 
   return result
+}
+
+function applyStoreLinks(contentHtml: string): string {
+  const escapeAttr = (value: string) =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/'/g, '&#39;')
+
+  const detectPlatform = (rawLabel: string): string | null => {
+    const normalized = rawLabel.trim().toLowerCase()
+
+    if (normalized === 'ios' || normalized === 'iphone' || normalized === 'ipad' || normalized === 'app store') {
+      return 'ios'
+    }
+
+    if (normalized === 'android' || normalized === 'google play' || normalized === 'play market') {
+      return 'android'
+    }
+
+    if (normalized === 'appgallery' || normalized === 'app gallery' || normalized === 'huawei appgallery') {
+      return 'appgallery'
+    }
+
+    if (normalized === 'rustore' || normalized === 'ru store') {
+      return 'rustore'
+    }
+
+    return null
+  }
+
+  const prettifyPlatform = (platform: string, fallbackLabel: string): string => {
+    if (platform === 'ios') {
+      return 'iOS'
+    }
+    if (platform === 'android') {
+      return 'Android'
+    }
+    if (platform === 'appgallery') {
+      return 'AppGallery'
+    }
+    if (platform === 'rustore') {
+      return 'RuStore'
+    }
+
+    return fallbackLabel.trim()
+  }
+
+  const decodeHtmlEntities = (value: string): string =>
+    value
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+
+  const getAnchorAttribute = (anchorHtml: string, attributeName: string): string | null => {
+    const escapedName = attributeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const match = anchorHtml.match(new RegExp(`${escapedName}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i'))
+    const rawValue = match?.[1] ?? match?.[2]
+
+    if (typeof rawValue !== 'string') {
+      return null
+    }
+
+    return decodeHtmlEntities(rawValue)
+  }
+
+  const buildStoreBadge = (platform: string, anchorHtml: string): string | null => {
+    const href = getAnchorAttribute(anchorHtml, 'href')
+    if (!href) {
+      return null
+    }
+
+    const title = getAnchorAttribute(anchorHtml, 'title')
+    const rel = getAnchorAttribute(anchorHtml, 'rel')
+    const target = getAnchorAttribute(anchorHtml, 'target') ?? '_blank'
+
+    const attrs = [
+      `class="wiki-store-badge wiki-store-badge--${platform}"`,
+      `href="${escapeAttr(href)}"`,
+      `aria-label="${escapeAttr(title ?? href)}"`,
+    ]
+
+    attrs.push(`target="${escapeAttr(target)}"`)
+
+    if (rel) {
+      attrs.push(`rel="${escapeAttr(rel)}"`)
+    } else if (target === '_blank') {
+      attrs.push('rel="noreferrer noopener"')
+    }
+
+    const eyebrow =
+      platform === 'ios'
+        ? 'Download on the'
+        : platform === 'android'
+          ? 'Get it on'
+          : platform === 'appgallery'
+            ? 'Available on'
+            : platform === 'rustore'
+              ? 'Get it on'
+              : 'Download'
+
+    const titleText =
+      platform === 'ios'
+        ? 'App Store'
+        : platform === 'android'
+          ? 'Google Play'
+          : platform === 'appgallery'
+            ? 'AppGallery'
+            : platform === 'rustore'
+              ? 'RuStore'
+              : 'Download'
+
+    return `<a ${attrs.join(' ')}><span class="wiki-store-badge__icon" aria-hidden="true"></span><span class="wiki-store-badge__text"><span class="wiki-store-badge__eyebrow">${escapeAttr(eyebrow)}</span><span class="wiki-store-badge__title">${escapeAttr(titleText)}</span></span></a>`
+  }
+
+  const storeLinkRe =
+    /<p>\s*(?:Ссылка\s+на|Link\s+to)\s+([^:]+):\s*(<a\b[\s\S]*?<\/a>)\s*<\/p>/gi
+
+  const withStoreLinks = contentHtml.replace(storeLinkRe, (match, rawLabel, anchorHtml) => {
+    const platform = detectPlatform(String(rawLabel))
+
+    if (!platform) {
+      return match
+    }
+
+    const label = prettifyPlatform(platform, String(rawLabel))
+    const buttonHtml = buildStoreBadge(platform, String(anchorHtml))
+
+    if (!buttonHtml) {
+      return match
+    }
+
+    return `<div class="wiki-store-link" data-store-platform="${platform}"><span class="wiki-store-link__label">${label}</span>${buttonHtml}</div>`
+  })
+
+  return withStoreLinks.replace(
+    /(?:<div class="wiki-store-link"[\s\S]*?<\/div>\s*){2,}/g,
+    (groupHtml) => `<div class="wiki-store-links">${groupHtml}</div>`
+  )
 }
 
 function sortPages(pages: WikiPageMeta[], locale: Locale): WikiPageMeta[] {

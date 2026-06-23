@@ -1367,6 +1367,112 @@ a {
     margin-bottom: 0;
   }
 
+  .wiki-store-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 0 0 24px;
+  }
+
+  .wiki-store-link {
+    display: flex;
+    margin: 0;
+  }
+
+  .wiki-store-link__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .wiki-store-badge {
+    --store-badge-bg: #050505;
+    --store-badge-border: rgba(255, 255, 255, 0.14);
+    --store-badge-text: #ffffff;
+    --store-badge-eyebrow: rgba(255, 255, 255, 0.92);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: min(100%, 188px);
+    min-height: 54px;
+    padding: 8px 14px 8px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--store-badge-border);
+    background: var(--store-badge-bg);
+    color: var(--store-badge-text);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.16s ease, border-color 0.16s ease;
+  }
+
+  .wiki-store-badge:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+
+  .wiki-store-badge:focus-visible {
+    outline: 2px solid var(--colors-link);
+    outline-offset: 4px;
+  }
+
+  .wiki-store-badge__icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  .wiki-store-badge__text {
+    display: grid;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .wiki-store-badge__eyebrow {
+    color: var(--store-badge-eyebrow);
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+
+  .wiki-store-badge__title {
+    color: var(--store-badge-text);
+    font-size: clamp(15px, 1.9vw, 19px);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .wiki-store-badge--ios .wiki-store-badge__icon {
+    background-size: 74%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23fff' d='M43.2 33.9c0-6.2 5.1-9.2 5.4-9.4-3-4.3-7.6-4.9-9.2-5-3.9-.4-7.5 2.3-9.5 2.3s-5.1-2.2-8.4-2.1c-4.3.1-8.3 2.5-10.5 6.4-4.5 7.7-1.2 19.1 3.2 25.5 2.2 3.1 4.7 6.6 8.2 6.5 3.4-.1 4.7-2.1 8.8-2.1s5.2 2.1 8.8 2c3.7-.1 6-3.2 8.1-6.4 2.5-3.6 3.4-7.1 3.5-7.2-.1-.1-6.7-2.6-6.7-10.5ZM37 14.4c1.8-2.2 3-5.2 2.7-8.2-2.6.1-5.8 1.7-7.7 3.9-1.7 2-3.2 5.1-2.8 8 2.9.2 5.9-1.5 7.8-3.7Z'/%3E%3C/svg%3E");
+  }
+
+  .wiki-store-badge--android .wiki-store-badge__icon {
+    background-size: 82%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%234fc3f7' d='M7 7.5c-.9.9-1.4 2.3-1.4 4v41c0 1.7.5 3.1 1.4 4l.7.6L31.1 33 7.7 6.9 7 7.5Z'/%3E%3Cpath fill='%23ffeb3b' d='M38.9 40.8 31.1 33l7.8-7.8 9.2 5.2c2.6 1.5 2.6 3.8 0 5.3l-9.2 5.1Z'/%3E%3Cpath fill='%23ff5252' d='M8.4 57.1 33.2 35.7l7.9 7.9-24.7 14c-3 1.7-5.5 1.6-8 .1Z'/%3E%3Cpath fill='%234caf50' d='M8.4 6.9c2.5-1.5 5-1.6 8-.1l24.7 14-7.9 7.9L8.4 6.9Z'/%3E%3C/svg%3E");
+  }
+
+  .wiki-store-badge--appgallery .wiki-store-badge__icon {
+    background-size: 88%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='1' y2='0'%3E%3Cstop stop-color='%23ff6a5c'/%3E%3Cstop offset='1' stop-color='%23db1fff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='9' y='9' width='46' height='46' rx='16' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M24 26.5A8 8 0 0 1 32 19a8 8 0 0 1 8 7.5h2.3c2.1 0 3.7 1.8 3.5 3.9L44 43.6A4 4 0 0 1 40 47H24a4 4 0 0 1-3.9-3.4l-1.8-13.2a3.6 3.6 0 0 1 3.5-3.9H24Zm4 0h8A4 4 0 0 0 32 23a4 4 0 0 0-4 3.5Z'/%3E%3C/svg%3E");
+  }
+
+  .wiki-store-badge--rustore .wiki-store-badge__icon {
+    background-size: 88%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='10' width='44' height='44' rx='12' fill='%232f80ff'/%3E%3Cpath fill='%23fff' d='M22 22h11.4c6.7 0 10.6 3.1 10.6 8.6 0 4-2.1 6.8-5.9 8l7.2 10.4H35.6L29.6 40H29v9H22V22Zm7 12.7h3.4c2.9 0 4.5-1.3 4.5-3.6s-1.6-3.4-4.5-3.4H29v7Z'/%3E%3C/svg%3E");
+  }
+
   ul,
   ol {
     padding-left: 22px;
@@ -1689,6 +1795,31 @@ a {
 
   .wiki-gallery[data-gallery-layout="carousel"] > * {
     flex-basis: 86vw;
+  }
+
+  .wiki-store-link {
+    width: 100%;
+  }
+
+  .wiki-store-badge {
+    width: 100%;
+    min-width: 0;
+    min-height: 50px;
+    padding: 8px 12px;
+  }
+
+  .wiki-store-badge__icon {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .wiki-store-badge__eyebrow {
+    font-size: 8px;
+  }
+
+  .wiki-store-badge__title {
+    font-size: clamp(14px, 5.8vw, 17px);
   }
 
 }

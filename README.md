@@ -184,6 +184,38 @@ icon: summary
 Цвета и дефолтные иконки для `note/tip/warning` настраиваются в теме через CSS‑переменные:
 `--colors-info-note`, `--colors-info-tip`, `--colors-info-warning`.
 
+## Кнопки-ссылки на сторы
+
+Чтобы показать store badges в стиле лендингов, используйте обычные markdown-ссылки в строках `Ссылка на ...:` или `Link to ...:`.
+
+Пример:
+
+```md
+Ссылка на iOS: [App Store](https://apps.apple.com/app/id123456789)
+Ссылка на Android: [Google Play](https://play.google.com/store/apps/details?id=com.example.app)
+```
+
+Поддерживаемые платформы:
+
+- `iOS`
+- `Android`
+- `AppGallery`
+- `RuStore`
+
+Правила:
+
+- После `Ссылка на ...:` должна идти обычная markdown-ссылка `[текст](url)`.
+- Если несколько таких строк идут подряд, они автоматически собираются в один блок бейджей.
+- Текст ссылки можно писать любой, но визуально будет показан фирменный badge платформы.
+- Если URL нет, бейдж не соберется: нужна именно markdown-ссылка, а не просто текст.
+
+Пример для английской локали:
+
+```md
+Link to iOS: [App Store](https://apps.apple.com/app/id123456789)
+Link to Android: [Google Play](https://play.google.com/store/apps/details?id=com.example.app)
+```
+
 ## Delimiter (пустые строки)
 
 Чтобы добавить вертикальный отступ (пустые строки) в Markdown, используйте `[[delimiter]]` на отдельной строке.
