@@ -359,8 +359,9 @@ function enhanceMarkdownHtml(contentHtml: string): string {
   const withTables = wrapMarkdownTables(withPlainCodeBlocks)
   const withInfoBlocks = applyInfoBlocks(withTables)
   const withGalleryBlocks = applyGalleryBlocks(withInfoBlocks)
+  const withDocumentCards = applyDocumentCards(withGalleryBlocks)
 
-  return applyStoreLinks(withGalleryBlocks)
+  return applyStoreLinks(withDocumentCards)
 }
 
 function wrapMarkdownTables(contentHtml: string): string {
@@ -572,6 +573,79 @@ function applyGalleryBlocks(contentHtml: string): string {
   }
 
   return result
+}
+
+function applyDocumentCards(contentHtml: string): string {
+  const escapeAttr = (value: string) =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/'/g, '&#39;')
+
+  const decodeHtmlEntities = (value: string): string =>
+    value
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+
+  const parseParams = (paramsRaw: string): Record<string, string> => {
+    const params: Record<string, string> = {}
+    const tokenRe = /([a-zA-Z0-9_-]+)\s*=\s*(".*?"|'.*?'|[^\s]+)/g
+    let match: RegExpExecArray | null
+
+    while ((match = tokenRe.exec(paramsRaw)) !== null) {
+      const key = match[1].trim().toLowerCase()
+      let value = match[2].trim()
+
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1)
+      }
+
+      params[key] = decodeHtmlEntities(value)
+    }
+
+    return params
+  }
+
+  const getExtensionLabel = (source: string): string => {
+    const normalizedSource = source.split('?')[0].split('#')[0]
+    const fileName = normalizedSource.split('/').pop() ?? normalizedSource
+    const extension = fileName.includes('.') ? fileName.split('.').pop() ?? '' : ''
+    return extension ? extension.toUpperCase() : 'FILE'
+  }
+
+  const getBaseFileName = (source: string): string => {
+    const normalizedSource = source.split('?')[0].split('#')[0]
+    const fileName = normalizedSource.split('/').pop() ?? normalizedSource
+    return fileName.replace(/\.[^.]+$/, '')
+  }
+
+  const buildDocumentCard = (paramsRaw: string): string => {
+    const params = parseParams(paramsRaw)
+    const source = params.src ?? params.href ?? params.file ?? ''
+
+    if (!source) {
+      return ''
+    }
+
+    const title = params.title?.trim() || getBaseFileName(source) || 'Document'
+    const type = params.type?.trim() || getExtensionLabel(source)
+    const meta = params.meta?.trim() || `Document · ${type}`
+    const downloadName = params.download?.trim() || title
+
+    return `<a class="wiki-document-card" href="${escapeAttr(source)}" download="${escapeAttr(downloadName)}"><span class="wiki-document-card__icon" aria-hidden="true"><span class="wiki-document-card__icon-page"></span></span><span class="wiki-document-card__body"><span class="wiki-document-card__title">${escapeAttr(title)}</span><span class="wiki-document-card__meta">${escapeAttr(meta)}</span></span><span class="wiki-document-card__download" aria-hidden="true"></span></a>`
+  }
+
+  return contentHtml.replace(/<p>\s*\[\[document([^\]]*)\]\]\s*<\/p>/gi, (_match, paramsRaw) => {
+    return buildDocumentCard(paramsRaw ?? '')
+  })
 }
 
 function applyStoreLinks(contentHtml: string): string {

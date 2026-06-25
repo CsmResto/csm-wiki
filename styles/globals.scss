@@ -27,6 +27,7 @@
   --colors-info-tip-bg: rgba(43, 182, 115, 0.08);
   --colors-info-warning-border: rgba(240, 180, 41, 0.3);
   --colors-info-warning-bg: rgba(240, 180, 41, 0.08);
+  --colors-document-icon-bg: rgba(0, 0, 0, 0.28);
   --wiki-sticky-top: 24px;
   --wiki-shell-gutter: 20px;
   --wiki-toolbar-offset: 0px;
@@ -62,6 +63,7 @@
   --colors-info-tip-bg: rgba(22, 163, 74, 0.08);
   --colors-info-warning-border: rgba(217, 119, 6, 0.3);
   --colors-info-warning-bg: rgba(217, 119, 6, 0.08);
+  --colors-document-icon-bg: #e7e7e7;
 }
 
 * {
@@ -1374,6 +1376,93 @@ a {
     margin: 0 0 24px;
   }
 
+  .wiki-document-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(100%, 420px);
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid var(--colors-border);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+      var(--colors-bg-surface-hover);
+    color: var(--colors-text-primary);
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  }
+
+  .wiki-document-card:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
+      var(--colors-bg-surface);
+  }
+
+  .wiki-document-card:focus-visible {
+    outline: 2px solid var(--colors-link);
+    outline-offset: 4px;
+  }
+
+  .wiki-document-card__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 12px;
+    background: var(--colors-document-icon-bg);
+  }
+
+  .wiki-document-card__icon-page {
+    width: 18px;
+    height: 18px;
+    opacity: 0.92;
+    background: center / contain no-repeat url("/assets/icons/document.svg");
+  }
+
+  .wiki-document-card__body {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .wiki-document-card__title {
+    font-size: clamp(14px, 1.55vw, 16px);
+    line-height: 1.15;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .wiki-document-card__meta {
+    font-size: clamp(11px, 1.1vw, 12px);
+    line-height: 1.2;
+    color: var(--colors-text-secondary);
+  }
+
+  .wiki-document-card__download {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    background-image: url("/assets/icons/longArrow-send-to-bottom.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  .wiki-document-card:hover .wiki-document-card__download {
+    transform: translateY(1px);
+    opacity: 0.92;
+  }
+
   .wiki-store-link {
     display: flex;
     margin: 0;
@@ -1801,6 +1890,40 @@ a {
     width: 100%;
   }
 
+  .wiki-document-card {
+    width: 100%;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .wiki-document-card__icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 10px;
+  }
+
+  .wiki-document-card__icon-page {
+    width: 16px;
+    height: 16px;
+  }
+
+  .wiki-document-card__title {
+    font-size: clamp(13px, 4.2vw, 15px);
+  }
+
+  .wiki-document-card__meta {
+    font-size: clamp(10px, 3.2vw, 11px);
+  }
+
+  .wiki-document-card__download {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+    background-size: 14px 14px;
+  }
+
   .wiki-store-badge {
     width: 100%;
     min-width: 0;
@@ -2010,6 +2133,21 @@ a {
 
   .wiki-info[data-info-type="warning"] .wiki-info__icon::before {
     content: '!';
+  }
+
+  .wiki-document-card {
+    background: var(--colors-bg-surface);
+    border-color: var(--colors-border);
+    box-shadow: none;
+  }
+
+  .wiki-document-card__icon {
+    background: transparent;
+    border: 1px solid var(--colors-border);
+  }
+
+  .wiki-document-card__download {
+    background-color: transparent;
   }
 
   @supports (-webkit-touch-callout: none) {

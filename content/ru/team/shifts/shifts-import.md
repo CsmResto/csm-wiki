@@ -6,6 +6,13 @@ order: 2
 updatedAt: 2026-04-24
 ---
 Импорт расписания позволяет быстро загрузить смены для нескольких сотрудников на выбранной локации.
+
+**Шаблоны импорта:**
+
+[[document src="/ru/documents/team/импорт смен с зонами формат xlsx.xlsx" title="импорт смен с зонами формат xlsx" meta="Документ · XLSX"]]
+
+[[document src="/ru/documents/team/импорт смен с зонами формат csv.csv" title="импорт смен с зонами формат csv" meta="Документ · CSV"]]
+
 ## Как загрузить смены
 
 **1.** Нажмите `Импорт расписания` в разделе Смены.
@@ -45,8 +52,14 @@ updatedAt: 2026-04-24
 - **roleId** — уникальный идентификатор роли в системе
 - **zone** — название зоны (*необязательное поле*)
 
+[[info type=custom color=#E06823]]
+Узнать roleId можно в карточке роли в URL
 
-**Пример заполнения файла:**
+![image1](/ru/images/team/user-id.jpg)
+
+![image2](/ru/images/team/role-id.jpg)
+
+[[/info]]
 
 ```csv
 start_year,start_month,start_day,start_hour,start_minute,end_year,end_month,end_day,end_hour,end_minute,employeeId,roleId,zone
@@ -71,4 +84,3 @@ start_year,start_month,start_day,start_hour,start_minute,end_year,end_month,end_
 | **Длительность смены превышает допустимый лимит**              | В файле есть смены длительностью более 48 часов.                                                 |
 | **Не удалось обработать файл**                                 | Произошла ошибка при чтении данных из загруженного файла.                                        |
 | **Указанная зона не найдена в выбранной локации**              | В колонке `Zone` указано название зоны, которого нет среди настроенных зон выбранной локации.    |
-
