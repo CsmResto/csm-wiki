@@ -57,7 +57,7 @@ type UiText = {
 const uiTextByLocale: Record<Locale, UiText> = {
   ru: {
     rootTitle: 'CSM Wiki',
-    homeDescription: 'Корневая страница wiki',
+    homeDescription: 'База знаний системы COSMOS',
     copyLabel: 'Копировать',
     copiedLabel: 'Скопировано',
     copyFailedLabel: 'Ошибка',
@@ -78,7 +78,7 @@ const uiTextByLocale: Record<Locale, UiText> = {
   },
   en: {
     rootTitle: 'CSM Wiki',
-    homeDescription: 'Wiki root page',
+    homeDescription: 'COSMOS system knowlegde base',
     copyLabel: 'Copy',
     copiedLabel: 'Copied',
     copyFailedLabel: 'Failed',
