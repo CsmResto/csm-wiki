@@ -3,7 +3,7 @@ title: "Ручные теги"
 description: 
 summary: 
 icon: tags
-order: 6
+order: 5
 ---
 
 
