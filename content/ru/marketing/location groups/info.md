@@ -38,7 +38,7 @@ updatedAt: 2026-08-14
 
 На примере ниже показано, как отображаются данные одного и того же гостя при просмотре разных групп локаций.
 
-![клиент в разных группах](/ru/images/location-groups/pushkin-groups3.png)
+![клиент в разных группах](/ru/images/location-groups/pushkin.png)
 
 [[delimiter rows=1]]
 
