@@ -12,8 +12,8 @@ updatedAt: 2026-07-23
 Лист ожидания доступен в представлениях `Таймлайн, План этажа и Таблица`. На Таймлайне и Плане этажа отображается отдельный список со счетчиком активных записей.
 
 [[gallery gap=12 layout=carousel]]
-![Заявки](/ru/images/reserve/requests/waitlist1.png)
-![Заявки](/ru/images/reserve/requests/waitlist2.png)
+![Заявки](/ru/images/reserve/requests/waitlist1ru.png)
+![Заявки](/ru/images/reserve/requests/waitlist2ru.png)
 [[/gallery]]
 
 [[delimiter rows=1]]
@@ -37,7 +37,7 @@ updatedAt: 2026-07-23
 
 ## Создание записи из заявки
 
-![Заявки](/ru/images/reserve/requests/waitlist3.png)
+![Заявки](/ru/images/reserve/requests/waitlist3ru.png)
 
 [[delimiter rows=1]]
 
@@ -50,7 +50,7 @@ updatedAt: 2026-07-23
 
 ## Создание записи вручную
 
-![Заявки](/ru/images/reserve/requests/waitlist4.png)
+![Заявки](/ru/images/reserve/requests/waitlist4ru.png)
 
 [[delimiter rows=1]]
 
@@ -72,7 +72,7 @@ updatedAt: 2026-07-23
 
 ## Перевод в бронирование
 
-![Заявки](/ru/images/reserve/requests/waitlist5.png)
+![Заявки](/ru/images/reserve/requests/waitlist5ru.png)
 
 [[delimiter rows=1]]
 
