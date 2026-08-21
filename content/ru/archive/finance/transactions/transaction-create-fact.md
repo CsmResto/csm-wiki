@@ -15,7 +15,7 @@ updatedAt: 2026-07-02
 3. Нажмите **Создать**.
 
 [[gallery gap=12 layout=carousel]]
-![Фактические](/ru/images/transactions/transaction-create-fact/transaction-create-fact1.jpg)
+![Фактические](/ru/images/transactions/transaction-create-fact/transaction-create-fact1-2.jpg)
 ![Фактические](/ru/images/transactions/transaction-create-fact/transaction-create-fact2.jpg)
 ![Фактические](/ru/images/transactions/transaction-create-fact/transaction-create-fact3.jpg)
 [[/gallery]]
